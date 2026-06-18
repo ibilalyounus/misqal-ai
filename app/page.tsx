@@ -585,18 +585,37 @@ useEffect(() => {
     "Other",
   ];
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+ async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
 
-    if (!email || !role) return;
+  if (!email || !role) return;
 
-    console.log("Misqal waitlist signup:", {
-      email,
-      role,
+  try {
+    const response = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        role,
+      }),
     });
 
+    const result = await response.json();
+
+    if (!response.ok) {
+      alert(result.error || "Something went wrong.");
+      return;
+    }
+
+    console.log("Waitlist signup:", result);
+
     setSubmitted(true);
+  } catch {
+    alert("Something went wrong. Please try again.");
   }
+}
 
   return (
     <section
@@ -677,14 +696,14 @@ useEffect(() => {
               </div>
 
               <h3 className="text-5xl font-black uppercase leading-[0.85] tracking-[-0.08em] text-white">
-                You are
+                Alhamdulillah,
                 <br />
-                on the list.
+                you are on the list
               </h3>
 
               <p className="mt-6 max-w-sm text-base leading-7 text-white/50">
                 We’ll reach out when early access opens. You’ll receive the 3-month free plan
-                as part of the first builder group.
+                as part of the first builder group, InshAllah
               </p>
             </div>
           ) : (
